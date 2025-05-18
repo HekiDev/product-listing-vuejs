@@ -239,7 +239,7 @@ watch(priceMax, (val) => {
                         :options="productStore.categories"
                         filter
                         optionLabel="name"
-                        showClear
+                        disabled
                         placeholder="Select a Category"
                     >
                         <template #value="slotProps">

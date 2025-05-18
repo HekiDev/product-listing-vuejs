@@ -7,13 +7,9 @@ import debounce from 'lodash/debounce'
 import ProductFilter from './ProductFilter.vue';
 import ProductCard from './ProductCard.vue';
 import ProductCardSkeleton from '@/components/ProductCardSkeleton.vue';
+import ProductForm from './ProductForm.vue';
 import Dialog from '@/volt/Dialog.vue';
-import InputText from "@/volt/InputText.vue";
-import InputNumber from '@/volt/InputNumber.vue';
-import Textarea from '@/volt/Textarea.vue';
 import Button from '@/volt/Button.vue';
-import Select from '@/volt/Select.vue';
-import Message from '@/volt/Message.vue';
 
 const productStore = useProductStore();
 const toast = useToast();
@@ -206,63 +202,16 @@ watch(priceMax, (val) => {
             :style="{ width: '50rem' }"
             :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
         >
-            <div class="flex flex-col justify-center gap-3 py-3">
-                <Message severity="error" class="p-2" v-if="errors.length > 0">
-                    <div class="flex flex-col gap-2">
-                        <div class="flex gap-2 items-center">
-                            <i class="pi pi-exclamation-circle text-2xl text-error"></i>
-                            <p>Something went wrong!</p>
-                        </div>
-                        <ul class="list-disc list-inside">
-                            <li v-for="error in errors" class="capitalize">{{ error }}</li>
-                        </ul>
-                    </div>
-                </Message>
-                <div class="flex gap-3">
-                    <div class="flex-1 flex flex-col gap-2">
-                        <label class="font-medium">Title</label>
-                        <InputText id="username" v-model="form.title" aria-describedby="username-help" />
-                    </div>
-                    <div class="flex-1 flex flex-col gap-2">
-                        <label class="font-medium">Price</label>
-                        <InputNumber v-model="form.price" inputId="currency-us" mode="currency" currency="USD" locale="en-US" fluid />
-                    </div>
-                </div>
-                <div class="flex flex-col gap-3">
-                    <label class="font-medium">Description</label>
-                    <Textarea v-model="form.description" rows="3" cols="5" class="resize-none" />
-                </div>
-                <div class="flex-1 flex flex-col gap-2">
-                    <label>Category</label>
-                    <Select
-                        v-model="form.category"
-                        :options="productStore.categories"
-                        filter
-                        optionLabel="name"
-                        disabled
-                        placeholder="Select a Category"
-                    >
-                        <template #value="slotProps">
-                            <div v-if="slotProps.value" class="flex items-center gap-2">
-                                <div>{{ slotProps.value.name }}</div>
-                            </div>
-                            <span v-else>
-                                {{ slotProps.placeholder }}
-                            </span>
-                        </template>
-                        <template #option="slotProps">
-                            <div class="flex items-center gap-2">
-                                <div>{{ slotProps.option.name }}</div>
-                            </div>
-                        </template>
-                    </Select>
-                </div>
-                <div class="flex flex-col gap-3">
-                    <label class="font-medium">Images (URL)</label>
-                    <Textarea v-model="form.images" rows="3" cols="5" class="resize-none" />
-                    <label class="text-sm">To add multiple image url, separate them with a comma. Ex: https://example.com/image1.jpg,https://example.com/image2.jpg</label>
-                </div>
-            </div>
+            <ProductForm
+                v-model:title="form.title"
+                v-model:price="form.price"
+                v-model:description="form.description"
+                v-model:category="form.category"
+                v-model:images="form.images"
+                :errors="errors"
+                :categories="productStore.categories"
+                :isEditing="isEditing"
+            />
             <template #footer>
                 <Button label="Cancel" class="px-10" outlined @click="productDialog = false" autofocus />
                 <Button :label="isAdding ? 'Create' : 'Update'" :loading="isSubmitting" class="px-10" @click="isAdding ? handleAddProduct() : handleUpdateProduct()" autofocus />
